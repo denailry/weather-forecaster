@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.denailry.weather_forecaster.model.Weathers
+import com.denailry.weather_forecaster.repository.api.data.Weathers
 import com.denailry.weather_forecaster.util.Util
 import java.util.*
 import kotlin.collections.ArrayList

@@ -1,4 +1,4 @@
-package com.denailry.weather_forecaster.api
+package com.denailry.weather_forecaster.repository.api
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
