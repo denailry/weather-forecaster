@@ -4,9 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.denailry.weather_forecaster.repository.api.Api
+import com.denailry.weather_forecaster.repository.api.OpenWeatherAPI
 import com.denailry.weather_forecaster.repository.api.data.WeatherResponse
-import com.denailry.weather_forecaster.repository.api.data.Weathers
+import com.denailry.weather_forecaster.repository.api.data.Weather
 import com.denailry.weather_forecaster.util.Util
 import retrofit2.Callback
 import kotlinx.android.synthetic.main.activity_main.*
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchWeather(){
-        val api = Api.getInstance()
+        val api = OpenWeatherAPI.getInstance()
         val result = api.getByCityName("Jakarta")
         result.enqueue(object : Callback<WeatherResponse> {
             override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call<WeatherResponse>, response: Response<WeatherResponse>) {
                 val result = response.body()
                 if (result != null) {
-                    val reduced = ArrayList<Weathers>()
+                    val reduced = ArrayList<Weather>()
                     for (i in 0 until result.list.size) {
                         if ((i % 8) == 0) {
                             reduced.add(result.list[i])
@@ -54,8 +54,8 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun setTodayWeather(weather: Weathers) {
-        tvWeatherType.text = weather.weather[0].main
+    private fun setTodayWeather(weather: Weather) {
+        tvWeatherType.text = weather.weatherDetail[0].main
         tvTemperature.text = Util.toCelciusString(weather.main.temp)
     }
 }
