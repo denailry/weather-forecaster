@@ -15,4 +15,14 @@ data class Weather(
             return Weather(type, tempInCelcius, date, city, countryCode)
         }
     }
+
+    fun tempString() : String {
+        return String.format("%.1f", tempInCelcius) + "°C"
+    }
+
+    fun dayName() : String? {
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        return calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US)?.toString()
+    }
 }

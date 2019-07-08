@@ -2,19 +2,13 @@ package com.denailry.weather_forecaster
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.denailry.weather_forecaster.repository.api.OpenWeatherAPI
-import com.denailry.weather_forecaster.repository.api.data.WeatherResponse
-import com.denailry.weather_forecaster.repository.api.data.Weather
-import com.denailry.weather_forecaster.util.Util
-import retrofit2.Callback
+import com.denailry.weather_forecaster.model.Weather
+import com.denailry.weather_forecaster.repository.Repository
+import com.denailry.weather_forecaster.repository.api.RemoteRepository
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.tvTemperature
 import kotlinx.android.synthetic.main.activity_main.tvWeatherType
-import retrofit2.Call
-import retrofit2.Response
-import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,35 +21,30 @@ class MainActivity : AppCompatActivity() {
         rvWeathers.layoutManager = LinearLayoutManager(this)
         rvWeathers.adapter = adapter
 
-        fetchWeather()
+        loadWeathers()
     }
 
-    private fun fetchWeather(){
-        val api = OpenWeatherAPI.getInstance()
-        val result = api.getByCityName("Jakarta")
-        result.enqueue(object : Callback<WeatherResponse> {
-            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
-                Log.e(javaClass.simpleName, "Error: ${t.message}")
-            }
+    private fun loadWeathers(){
+        val repo = RemoteRepository()
 
-            override fun onResponse(call: Call<WeatherResponse>, response: Response<WeatherResponse>) {
-                val result = response.body()
-                if (result != null) {
-                    val reduced = ArrayList<Weather>()
-                    for (i in 0 until result.list.size) {
-                        if ((i % 8) == 0) {
-                            reduced.add(result.list[i])
-                        }
+        repo.getWeathersByCityName("Jakarta", object : Repository.ResponseListener {
+            override fun onResponse(weathers: List<Weather>) {
+                val reduced = ArrayList<Weather>()
+
+                for (i in 0 until weathers.size) {
+                    if ((i % 8) == 0) {
+                        reduced.add(weathers[i])
                     }
-                    setTodayWeather(reduced[0])
-                    adapter.update(reduced)
                 }
+
+                setTodayWeather(reduced[0])
+                adapter.update(reduced)
             }
         })
     }
 
     private fun setTodayWeather(weather: Weather) {
-        tvWeatherType.text = weather.weatherDetail[0].main
-        tvTemperature.text = Util.toCelciusString(weather.main.temp)
+        tvWeatherType.text = weather.type
+        tvTemperature.text = weather.tempString()
     }
 }

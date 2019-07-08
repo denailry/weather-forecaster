@@ -5,15 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.denailry.weather_forecaster.repository.api.data.Weather
-import com.denailry.weather_forecaster.util.Util
-import java.util.*
+import com.denailry.weather_forecaster.model.Weather
 import kotlin.collections.ArrayList
 
 class WeatherAdapter() : RecyclerView.Adapter<WeatherAdapter.ViewHolder>(){
     private var weathers: List<Weather> = ArrayList()
-
-    private val calendar = Calendar.getInstance()
 
     fun update(newWeathers: List<Weather>) {
         weathers = newWeathers
@@ -37,12 +33,9 @@ class WeatherAdapter() : RecyclerView.Adapter<WeatherAdapter.ViewHolder>(){
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = weathers[position]
 
-        val day = Util.getDayName(item.dt)
-        val type = item.weatherDetail[0].main
-
-        holder.day.text = day
-        holder.temp.text = Util.toCelciusString(item.main.temp)
-        holder.type.text = type
+        holder.day.text = item.dayName()
+        holder.temp.text = item.tempString()
+        holder.type.text = item.type
     }
 
     override fun getItemCount(): Int {

@@ -35,13 +35,17 @@ class RemoteRepository : Repository {
         val result = ArrayList<WeatherModel>()
 
         for (weather in weathers) {
-            result.add(WeatherModel.new(
-                weather.weatherDetail[0].description,
-                weather.main.temp,
-                weather.dt.toLong(),
-                city,
-                countryCode
-            ))
+            if (weather.weatherDetail.isNotEmpty()) {
+                result.add(WeatherModel.new(
+                    weather.weatherDetail[0].main,
+                    weather.main.temp,
+                    weather.dt.toLong(),
+                    city,
+                    countryCode
+                ))
+            } else {
+                Log.w(javaClass.simpleName, "unexpected zero size of weather details")
+            }
         }
 
         return result
